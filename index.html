@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>DMS5850 — Week 3: Financial Modeling &amp; Return Metrics</title><style>
+*, *::before, *::after { box-sizing: border-box; }
+html { font-size: 62.5%; height:100%; max-width:100vw; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body { margin:0; height:100%; background:#ffffff; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size:1.8rem; line-height:1.8; color:#111; overflow:hidden; position:relative; }
+.background-dots { position:fixed; top:0; right:0; width:60%; opacity:0.15; pointer-events:none; z-index:0; }
+.lesson-shell { height:100%; display:flex; flex-direction:column; position:relative; z-index:1; }
+.lesson-shell__header { padding:1.8rem 3rem; background:#fff; border-bottom:1px solid #ececec; display:flex; align-items:center; justify-content:space-between; gap:2rem; }
+.lesson-shell__title { font-size:2.2rem; font-weight:700; line-height:1.2; }
+.lesson-shell__meta { font-size:1.5rem; color:#555; white-space:nowrap; }
+.lesson-shell__body { flex:1; overflow-y:auto; padding:5rem 0; }
+.lesson-page { width:100%; max-width:104rem; margin:0 auto; padding:0 3.2rem; }
+:root { --space-xs:1.4rem; --space-sm:2.2rem; --space-md:3.4rem; --space-lg:5rem; --space-xl:7rem; --blue:#007CFF; --green:#0b6b3a; --ink:#111; --muted:#60656f; --soft:#f5f8fb; --line:#dde4ee; }
+.lesson-block { margin-block:var(--space-xl); padding:var(--space-lg); background:#fff; border-radius:.8rem; }
+.lesson-block.alt { background:#f7f9fb; box-shadow:0 .4rem 1.6rem rgba(0,0,0,.04); }
+.lesson-block.tint { background:#f4f9ff; box-shadow:0 .4rem 1.6rem rgba(0,0,0,.04); }
+.lesson-block h1 { font-size:4rem; line-height:1.12; margin:0 0 var(--space-sm); }
+.lesson-block h2 { font-size:2.8rem; margin:0 0 var(--space-sm); line-height:1.25; }
+.lesson-block h3 { font-size:2rem; margin:0 0 1rem; line-height:1.35; }
+.lesson-block h4 { font-size:1.8rem; margin:0 0 .6rem; line-height:1.35; }
+.lesson-block p { margin:0 0 var(--space-sm); }
+.lesson-block ul { margin:0 0 var(--space-sm); padding-left:2.4rem; }
+.lesson-block li { margin:.6rem 0; }
+.cover-screen { position:fixed; inset:0; background:#fff; z-index:5000; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:2rem; transition:opacity .35s ease, visibility .35s ease; }
+.cover-screen.hidden { opacity:0; visibility:hidden; }
+.cover-title { font-size:3.6rem; line-height:1.15; font-weight:750; margin-bottom:3rem; max-width:78rem; }
+.cover-btn { padding:1.2rem 2.4rem; font-size:1.8rem; border-radius:.6rem; border:0; background:var(--blue); color:#fff; cursor:pointer; font-weight:700; transition:background .2s ease; }
+.cover-btn:hover { background:#0066d1; }
+.hero { border-top:.8rem solid var(--blue); background:linear-gradient(180deg,#fff,#f7fbff); }
+.callout { border-left:.6rem solid var(--blue); padding:1.8rem 2.2rem; background:#f4f9ff; border-radius:.4rem; margin:var(--space-sm) 0; font-weight:650; }
+.callout2 { text-align:center; font-size:2.3rem; line-height:1.6; color:#1a1a1a; max-width:76rem; margin:3.6rem auto; padding:2rem 1rem; position:relative; }
+.callout2::before { content:""; width:6rem; height:.3rem; background:var(--green); border-radius:1rem; display:block; margin:0 auto 2rem; }
+.circle-list { padding-left:0 !important; list-style:none; margin-top:2rem; display:grid; gap:1.2rem; }
+.circle-list li { display:flex; align-items:center; margin:0; }
+.circle-num { width:3.2rem; height:3.2rem; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; margin-right:1rem; flex:0 0 auto; }
+.split { display:grid; grid-template-columns:minmax(0,1fr) minmax(28rem,.8fr); gap:3rem; align-items:start; }
+.panel { border:1px solid var(--line); border-radius:.8rem; padding:2.2rem; background:#fff; }
+.panel.green { border-left:.5rem solid var(--green); }
+.grid-3, .grid-4, .grid-2 { display:grid; gap:1.8rem; margin-top:2rem; }
+.grid-2 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.grid-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.grid-4 { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.mini-card { border:1px solid var(--line); border-radius:.8rem; padding:2rem; background:#fff; min-height:100%; }
+.mini-card h3, .mini-card h4 { color:#0d3155; }
+.reveal-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(23rem,1fr)); gap:1.6rem; margin-top:2rem; }
+.reveal-card { border:1px solid var(--line); border-radius:.8rem; background:#fff; overflow:hidden; }
+.reveal-btn { width:100%; border:0; background:#eef6ff; color:#10243a; padding:1.6rem; font-size:1.8rem; font-weight:700; text-align:left; cursor:pointer; }
+.reveal-content { display:none; padding:1.8rem; }
+.reveal-card.open .reveal-content { display:block; }
+.accordion { border:1px solid #d9e1ea; border-radius:.8rem; overflow:hidden; background:#fff; }
+.accordion-item + .accordion-item { border-top:1px solid #d9e1ea; }
+.accordion-header { background:#f7f9fb; padding:1.6rem 1.8rem; cursor:pointer; font-size:1.8rem; font-weight:700; }
+.accordion-content { display:none; padding:1.8rem; background:#fff; }
+.accordion-item.open .accordion-content { display:block; }
+.lesson-tabs { display:flex; flex-wrap:wrap; gap:1rem; margin-top:1.6rem; }
+.tab-btn { padding:.9rem 1.5rem; border-radius:.7rem; border:1px solid #cbd7e5; background:#fff; cursor:pointer; font-size:1.6rem; font-weight:650; }
+.tab-btn.active { background:#eaf4ff; border-color:#7dbaff; color:#07315b; }
+.tab-content { display:none; margin-top:1.8rem; }
+.tab-content.active { display:block; }
+.card-sequence { position:relative; margin:3rem auto; width:100%; max-width:82rem; }
+.card-sequence::before { content:""; position:absolute; left:2rem; top:0; width:2px; height:100%; background:#d9e1ea; z-index:0; }
+.sequence-card { position:relative; background:#fff; border-radius:.8rem; padding:2.2rem 2.6rem; margin:2.4rem 0 2.4rem 4rem; box-shadow:0 4px 18px rgba(0,0,0,.07); border-left:.4rem solid var(--green); z-index:2; }
+.sequence-date { color:var(--green); font-weight:800; font-size:1.6rem; margin-bottom:.6rem; }
+.choice-block { display:grid; grid-template-columns:28rem 1fr; gap:2rem; align-items:start; }
+.choice-menu { display:grid; gap:1rem; }
+.choice-btn { border:1px solid #cbd7e5; background:#fff; text-align:left; padding:1.4rem 1.6rem; border-radius:.7rem; font-size:1.65rem; font-weight:700; cursor:pointer; }
+.choice-btn.active { border-color:var(--blue); background:#eaf4ff; }
+.choice-panel { display:none; }
+.choice-panel.active { display:block; }
+.comparison { display:grid; grid-template-columns:1fr 1fr; gap:1.8rem; margin-top:2rem; }
+.comparison .panel:first-child { border-top:.5rem solid #7a8a9a; }
+.comparison .panel:last-child { border-top:.5rem solid var(--green); }
+.quote-line { border-block:1px solid var(--line); padding:2.4rem 0; font-weight:700; color:#1b2d40; }
+.section-divider { text-align:center; background:#fff; border-top:.6rem solid var(--green); box-shadow:0 .4rem 1.6rem rgba(0,0,0,.04); }
+.section-divider h2 { margin-bottom:0; }
+.continue-wrap { width:100%; margin:3rem 0; }
+.continue-btn { width:100%; border:0; border-radius:.8rem; background:#006649; color:#fff; min-height:6.4rem; font-size:1.9rem; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 .4rem 1.6rem rgba(0,102,73,.18); transition:background .2s ease, transform .2s ease; }
+.continue-btn:hover { background:#00563e; transform:translateY(-1px); }
+.continue-btn:focus-visible { outline:.3rem solid #7dbaff; outline-offset:.3rem; }
+.template-note { color:var(--muted); font-size:1.6rem; }
+.code-note { display:block; margin-top:1rem; padding:1.4rem 1.6rem; border:1px dashed #cbd7e5; border-radius:.8rem; background:#fbfdff; color:#425466; font-size:1.55rem; }
+@media (max-width:850px) {
+  .lesson-shell__header { align-items:flex-start; flex-direction:column; }
+  .split, .grid-2, .grid-3, .grid-4, .choice-block, .comparison { grid-template-columns:1fr; }
+  .lesson-block { padding:3rem 2rem; margin-block:4rem; }
+  .lesson-page { padding:0 1.8rem; }
+}
+.primary,.cover-btn{padding:1.15rem 2rem;border:0;border-radius:.6rem;background:var(--blue);color:#fff;cursor:pointer;font-size:1.7rem;font-weight:700}.primary:hover,.cover-btn:hover{background:#0066d1}.secondary{padding:1rem 1.5rem;border:1px solid #aebdcd;border-radius:.6rem;background:#fff;cursor:pointer;font-size:1.6rem;font-weight:650}.options{display:grid;gap:1rem;margin:2rem 0}.option{display:flex;gap:1rem;align-items:flex-start;border:1px solid var(--line);border-radius:.7rem;background:#fff;padding:1.3rem 1.5rem;cursor:pointer}.option:hover{border-color:#7dbaff}.option input{margin-top:.55rem;accent-color:var(--blue)}.feedback{display:none;margin-top:1.6rem;padding:1.4rem 1.6rem;border-radius:.6rem;font-weight:650}.feedback.show{display:block}.feedback.correct{background:#e7f6ed;color:#07562d;border-left:.5rem solid var(--green)}.feedback.incorrect{background:#fff0f0;color:#7c1e1e;border-left:.5rem solid var(--red)}.assessment-actions{display:flex;flex-wrap:wrap;gap:1rem;margin-top:1.8rem}
+:root{--blue:#006bdb;--red:#a32626}body{height:auto;overflow:auto}.lesson-shell{height:auto;min-height:100vh}.lesson-shell__body{overflow:visible;padding:2rem 0}.lesson-block{margin-block:4rem}button,textarea{font:inherit}:focus-visible{outline:3px solid #006bdb;outline-offset:4px}.lesson-nav{display:flex;flex-wrap:wrap;gap:1rem 2rem;margin-top:2rem}.lesson-nav a{color:#075594;font-size:1.6rem}.eyebrow{font-size:1.5rem;color:#536477;font-weight:700}.circle-list li{align-items:flex-start}.circle-num{margin-top:.4rem}.dimension{margin:2rem 0}.dimension summary{padding:1.4rem 1.8rem;background:#eef6ff;font-weight:650;cursor:pointer}.dimension details p{padding:1.8rem;margin:0}.dimension h3{color:#0d3155}.reflection{margin:2.5rem 0}.reflection label{display:block;margin-bottom:1rem}.reflection textarea{width:100%;min-height:15rem;resize:vertical;padding:1.5rem;border:1px solid #aebdcd;border-radius:.6rem;background:white;color:#111}.assessment+.assessment{border-top:1px solid var(--line);padding-top:3rem;margin-top:3rem}fieldset{border:0;padding:0;margin:0;min-width:0}legend{font-weight:650;padding:0}.skip-link{position:absolute;top:-10rem;left:1rem;background:white;padding:1rem;z-index:10}.skip-link:focus{top:1rem}.mini-card h3{font-size:1.9rem}.notes-status{min-height:2rem;font-size:1.6rem;color:#07562d}@media(max-width:850px){.lesson-block h1{font-size:3.2rem}.lesson-shell__meta{white-space:normal}}@media print{body{font-size:12pt}.lesson-block{padding:1rem;margin:2rem 0;break-inside:avoid}.lesson-nav,.assessment-actions,.check,.skip-link{display:none}details::details-content{display:block}.reflection textarea{min-height:12rem}}
+
+.match-card{margin:2rem 0;padding:2.2rem;border:1px solid var(--line);border-radius:.8rem;background:white}.match-card label{display:block;font-weight:650;margin-bottom:1rem}.match-card select{width:100%;font:inherit;padding:1rem;border:1px solid #aebdcd;border-radius:.5rem;background:white}.match-card .feedback{font-size:1.65rem}.framework-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.8rem}.framework-grid .mini-card{border-top:4px solid var(--blue)}.framework-grid .mini-card:nth-child(2){border-color:#0b6b3a}.framework-grid .mini-card:nth-child(3){border-color:#84521d}.framework-grid .mini-card:nth-child(4){border-color:#7758a0}.comparison ul{margin-bottom:0}.comparison h3{margin-bottom:2rem}.skill-section{margin:2.2rem 0}.skill-section h3{color:#0d3155}@media(max-width:850px){.framework-grid{grid-template-columns:1fr}}
+
+.framework{margin:2rem 0}.framework h3{color:#0d3155}.risk{margin:2rem 0;padding:2.4rem;background:white;border:1px solid var(--line);border-radius:.8rem}.risk legend{font-weight:700;color:#0d3155;font-size:2rem}.risk fieldset{margin-top:2rem}.risk .option{font-size:1.65rem}.risk .feedback{font-size:1.65rem}.governance details{border:1px solid var(--line);border-radius:.8rem;background:white;margin:1.6rem 0}.governance summary{padding:1.8rem;cursor:pointer;font-weight:700}.governance details p{padding:0 1.8rem 1.8rem;margin:0}.match-summary{font-weight:650;color:#07562d}.reference-heading{font-size:1.5rem;color:#536477;margin-bottom:1rem}.primary:disabled{opacity:.6;cursor:default}@media print{.risk{break-inside:avoid}.governance details::details-content{display:block}}
+
+.factory-map{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin:2rem 0}.factory-map article{background:#eaf4ff;border-top:4px solid var(--blue);padding:1.5rem;font-size:1.55rem}.factory-map h4{font-size:1.6rem}.factory-map p{margin:0}.factory-detail{margin:1.5rem 0;border:1px solid var(--line);border-radius:.8rem;background:#fff}.factory-detail summary{cursor:pointer;font-weight:700;padding:1.7rem;color:#0d3155}.factory-detail .detail-body{padding:0 1.7rem 1.7rem}.protocol{padding:1.8rem;background:#eaf4ff;border-left:5px solid var(--blue);margin:2rem 0}.risk-columns{display:grid;grid-template-columns:1fr 1fr;gap:2rem}.risk-columns li{margin-bottom:1.8rem}.control{margin:1.4rem 0;padding:1.8rem;background:white;border-left:4px solid var(--green)}@media(max-width:850px){.factory-map,.risk-columns{grid-template-columns:1fr}}
+
+.term-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.8rem}.term-grid .panel{border-top:4px solid var(--blue)}.governance-card{margin:2rem 0;padding:2.4rem;border:1px solid var(--line);border-radius:.8rem;background:white}.governance-card h3{color:#0d3155}.scenario{padding:2.4rem;margin:2rem 0;border:1px solid var(--line);border-radius:.8rem;background:white}.scenario select{font:inherit;width:100%;padding:1rem;border:1px solid #aebdcd;border-radius:.6rem;margin:1rem 0}.scenario label{font-weight:700}.scenario .strategy{margin-top:1.5rem;border-left:4px solid var(--green);padding:1.5rem;background:#e7f6ed}.strategy[hidden]{display:none}.action-list{display:grid;gap:1.4rem}.action-list label{display:flex;align-items:flex-start;gap:1.4rem;padding:1.8rem;border:1px solid var(--line);border-radius:.8rem;background:white;cursor:pointer}.action-list input{margin-top:.7rem;accent-color:var(--green)}.action-list label:has(input:checked){background:#e7f6ed}.action-list input:checked+span{color:#07562d}.eyebrow{letter-spacing:.03em} .assessment-actions{margin-top:1rem}@media(max-width:850px){.term-grid{grid-template-columns:1fr}}@media print{.strategy[hidden]{display:block}.scenario select,.scenario button{display:none}}
+
+.media{margin:2.5rem 0;border:1px solid var(--line);border-radius:.8rem;padding:1.5rem;background:#fff}.media iframe{display:block;width:100%;height:48rem;border:0}.media a{color:#075594;font-size:1.6rem}.subsection{margin:3.5rem 0}.subsection h3{color:#0d3155;border-bottom:2px solid var(--line);padding-bottom:1rem}.drug-heading{font-size:1.9rem;color:#0d3155;margin-top:2.4rem}.safety{border-left:5px solid #a32626;background:#fff0f0;padding:1.8rem;margin:1.8rem 0}.dose{background:#f4f9ff;padding:1.6rem;border-radius:.6rem}.source-list li{margin-bottom:1.5rem}.match-row{border-bottom:1px solid var(--line);padding:2rem 0}.match-row label{display:block;margin-bottom:1rem}.match-row select{font:inherit;width:100%;background:white;padding:1rem;border:1px solid #aebdcd;border-radius:.6rem}.row-status{font-size:1.6rem;margin-top:1rem}.row-status:empty{display:none}@media(max-width:600px){.media iframe{height:34rem}.lesson-shell__title{font-size:1.8rem}}@media print{.media iframe{display:none}.subsection{break-inside:avoid}}
+
+.table-wrap{overflow-x:auto;margin:2rem 0}table{width:100%;border-collapse:collapse;font-size:1.65rem}th,td{padding:1.5rem;border:1px solid var(--line);text-align:left;vertical-align:top}thead{background:#eaf4ff}tbody th{background:#f7f9fb}.portfolio{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;margin:2rem 0}.portfolio article{padding:2rem;border:1px solid var(--line);border-top:4px solid var(--green);border-radius:.6rem;background:white}.portfolio article:last-child{border-top-color:#a32626}.portfolio h4{color:#0d3155}.term{border-bottom:1px solid var(--line);background:white}.term summary{padding:1.6rem;cursor:pointer;font-weight:700}.term p{padding:0 1.6rem 1.6rem}.worksheet label{display:block;font-weight:650}.worksheet textarea{font:inherit;width:100%;min-height:16rem;padding:1.5rem;margin:1rem 0 2rem;border:1px solid #aebdcd;border-radius:.6rem}.sequence-card p{margin-bottom:0}@media(max-width:850px){.portfolio{grid-template-columns:1fr}}@media print{.term::details-content{display:block}}
+
+.formula{padding:1.8rem;background:#eef6ff;border-left:4px solid var(--blue);overflow-wrap:anywhere;font-family:ui-monospace,monospace;font-size:1.6rem;margin:1.8rem 0}.model-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.6rem}.model-fields label{display:block;font-weight:650;font-size:1.6rem}.model-fields input{display:block;width:100%;padding:1rem;font:inherit;border:1px solid #aebdcd;border-radius:.5rem;background:white}.model-result{background:#e7f6ed;border-left:4px solid var(--green);padding:2rem;margin-top:2rem}.model-result strong{font-size:2.5rem}.model-result table{background:white}.example-block{border:1px solid var(--line);padding:2rem;margin:2rem 0;border-radius:.7rem}.subheading{margin-top:3rem!important}.worksheet textarea{min-height:16rem}@media(max-width:650px){.model-fields{grid-template-columns:1fr}}
+</style></head><body><a class="skip-link" href="#intro">Skip to content</a><div class="lesson-shell"><header class="lesson-shell__header"><div class="lesson-shell__title">DMS 5850 · Financial Modeling &amp; Return Metrics</div><div class="lesson-shell__meta">Week 3</div></header><main class="lesson-shell__body"><div class="lesson-page"><section class="lesson-block hero" id="intro"><p class="eyebrow">DMS 5850 · Week 3</p><h1>Advanced Financial Modeling, Time Value of Money, and Quantitative Return Metrics in Healthcare</h1><nav class="lesson-nav" aria-label="Sections"><a href="#section-1">Context</a><a href="#section-2">TVM & Hurdle Rates</a><a href="#section-3">Financial Metrics</a><a href="#section-4">Governance</a><a href="#section-5">ECPOA Application</a><a href="#model">DCF Practice</a></nav></section>
+<section class="lesson-block " id="section-1"><h2>1. Executive Summary &amp; Foundational Context</h2>
+<p>In Week 2, we framed the strategic baseline for capital investment, distinguishing capital expenditures (CapEx) from operating expenses (OpEx) and establishing multi-year revenue and expense assumptions. However, establishing baseline cash flow estimates is only the first step in C-suite decision-making. Executive healthcare leaders must evaluate whether a prospective capital project creates long-term financial value for the organization or erodes its long-term solvency.</p>
+<p>Week 3 transitions from qualitative strategic framing to advanced quantitative evaluation through Discounted Cash Flow (DCF) modeling. Because healthcare capital investments require substantial upfront cash outlays while yielding operational returns over multi-year horizons, executive financial management must account for the Time Value of Money (TVM), inflation, and institutional cost of capital.</p>
+<p>This lecture examines the mathematical mechanics and governance principles of DCF analysis, Net Present Value (NPV), Internal Rate of Return (IRR), Payback Period, and Weighted Average Cost of Capital (WACC). These quantitative tools provide the evidence required to defend capital requests before governing boards and establish the foundation for Section 3 of your Executive Capital Proposal and Organizational Assessment (ECPOA).</p>
+</section>
+<section class="lesson-block alt" id="section-2"><h2>2. Theoretical Frameworks: Time Value of Money &amp; Corporate Hurdle Rates</h2>
+<h3 class="subheading">2.1 The Time Value of Money (TVM) Principle</h3>
+<p>The core foundation of financial analysis is that a dollar received today is worth more than a dollar received in the future (Reiter &amp; Song, 2024). This fundamental asymmetry exists due to three factors:</p>
+<p>Opportunity Cost: Capital held today can be invested in interest-bearing assets or alternative healthcare initiatives.</p>
+<p>Inflation: Future purchasing power is systematically eroded over time by labor and supply price increases.</p>
+<p>Risk &amp; Uncertainty: Prospective operational cash inflows carry inherent operational, reimbursement, and volume risks.</p>
+<p>To compare cash flows occurring across different time periods, financial analysts use discounting mechanics to translate prospective future cash flows into present-value dollars:</p>
+<div class="formula">&quot;Present Value (PV)&quot;=〖&quot;Future Value (FV)&quot; 〗_t/(1+r)^t</div>
+<p>Where 〖&quot;FV&quot; 〗_t represents the future net cash flow in year t, r represents the discount rate (hurdle rate), and t represents the specific time period (year).</p>
+<h3 class="subheading">2.2 Cost of Capital &amp; Establishing Institutional Hurdle Rates</h3>
+<p>The discount rate used in DCF modeling is not an arbitrary figure; it reflects the organization’s Weighted Average Cost of Capital (WACC) (Reiter &amp; Song, 2024). WACC represents the blended cost of long-term debt financing (bonds, bank loans) and retained equity/net assets:</p>
+<div class="formula">&quot;WACC&quot;=(D/V×r_d×(1-T))+(E/V×r_e )</div>
+<p>Where D is total debt, E is equity/net assets, V is total capital (D+E), r_d is the cost of debt, r_e is the required return on equity, and T is the corporate tax rate (for investor-owned systems).</p>
+<p>Not-for-Profit Systems (IRS 501(c)(3)): While tax-exempt health systems do not issue stock, they possess an implicit cost of net assets (r_e). This represents the minimum return necessary to maintain institutional credit ratings, satisfy bond covenants, and preserve days cash on hand (DCOH).</p>
+<p>Risk-Adjusted Hurdle Rates: Executive leadership must adjust the baseline WACC when evaluating projects with non-standard risk profiles. A routine facility renovation or equipment replacement might be discounted at baseline WACC (e.g., 6–8%), whereas a high-risk digital health platform or ambulatory joint-venture expansion might require a risk-adjusted hurdle rate of 10–12%.</p>
+</section>
+<section class="lesson-block " id="section-3"><h2>3. Quantitative Capital Metrics, Equations &amp; Practical Application</h2>
+<p>Executive financial modeling relies on three core metrics and equations to evaluate prospective capital projects:</p>
+<h3 class="subheading">3.1 Present Value (PV)</h3>
+<p>Equation:</p>
+<div class="formula">&quot;Present Value (PV)&quot;=〖&quot;Future Value (FV)&quot; 〗_t/(1+r)^t</div>
+<p>Executive Application &amp; Walkthrough: Calculates what a future net operational cash flow is worth today by discounting it back using the organizational hurdle rate.</p>
+<p>Example: If an ambulatory project expects a net cash flow of $100,000 in Year 3 (〖&quot;FV&quot; 〗_3=$100,000) and your health system&#x27;s hurdle rate (r) is 8% (0.08):</p>
+<div class="formula">&quot;PV&quot;=100,000/(1+0.08)^3 =100,000/(1.08)^3 =100,000/1.2597=$79,383.23</div>
+<p>Executive Interpretation: Receiving $100,000 three years from now is equivalent to having $79,383.23 in hand today.</p>
+<h3 class="subheading">3.2 Weighted Average Cost of Capital (WACC)</h3>
+<p>Equation:</p>
+<div class="formula">&quot;WACC&quot;=(D/V×r_d×(1-T))+(E/V×r_e )</div>
+<p>Executive Application &amp; Walkthrough: Determines your organization&#x27;s baseline discount rate by blending the cost of borrowed debt capital and equity/net assets.</p>
+<p>Example (Not-for-Profit Health System, T=0): Suppose a health system holds $40M in debt (D) at an interest rate (r_d) of 5% (0.05) and $60M in net assets/equity (E) with a required institutional return (r_e) of 8% (0.08) across a total capital base (V=D+E) of $100M:</p>
+<div class="formula">&quot;Debt Weight &quot; (D/V)=40/100=0.40 | &quot;Equity Weight &quot; (E/V)=60/100=0.60</div>
+<div class="formula">&quot;WACC&quot;=(0.40×0.05)+(0.60×0.08)=0.02+0.048=0.068&quot; or &quot; 6.8%</div>
+<p>Executive Interpretation: The organization&#x27;s baseline corporate hurdle rate for capital evaluation is 6.8%.</p>
+<h3 class="subheading">3.3 Net Present Value (NPV)</h3>
+<p>Equation:</p>
+<div class="formula">&quot;NPV&quot;=∑_(t=1)^N▒〖&quot;NCF&quot; 〗_t/(1+r)^t -&quot;Initial CapEx Outlay&quot;</div>
+<p>Executive Application &amp; Walkthrough: Sums the present values of all future net operational cash flows (〖&quot;NCF&quot; 〗_t) and subtracts the initial upfront capital acquisition outlay (&quot;Initial CapEx&quot; ).</p>
+<p>Example:</p>
+<p>Initial Upfront CapEx Outlay: $200,000 (Year 0)</p>
+<p>Hurdle Rate (r): 8% (0.08)</p>
+<p>Year 1 Net Cash Flow: $80,000 →&quot;PV&quot;=80,000/〖1.08〗^1 =$74,074</p>
+<p>Year 2 Net Cash Flow: $90,000 →&quot;PV&quot;=90,000/〖1.08〗^2 =$77,160</p>
+<p>Year 3 Net Cash Flow: $100,000 →&quot;PV&quot;=100,000/〖1.08〗^3 =$79,383</p>
+<div class="formula">&quot;Total Present Value of Inflows&quot;=$74,074+$77,160+$79,383=$230,617</div>
+<div class="formula">&quot;NPV&quot;=$230,617-$200,000=+$30,617</div>
+<div class="callout">Executive Decision Rule: Accept any project with an NPV &gt; $0. Since this project yields an NPV of +$30,617, it generates more cash than required to cover capital costs and directly adds net dollar value to the health system.</div>
+<h3 class="subheading">3.4 Internal Rate of Return (IRR) &amp; Payback Period</h3>
+<p>Internal Rate of Return (IRR): The specific discount rate (r) that sets project NPV to exactly $0.</p>
+<p>Decision Rule: Accept any project where IRR &gt; WACC / Hurdle Rate.</p>
+<p>Discounted Payback Period: Measures the exact number of years required for cumulative discounted operational cash flows to recover the initial capital outlay.</p>
+<p>Summary Table:</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">Financial Metric</th><th scope="col">Executive Purpose</th><th scope="col">Primary Decision Rule</th><th scope="col">Key Limitation</th></tr></thead><tbody>
+<tr><th scope="row">Net Present Value (NPV)</th><td>Measures total dollar wealth added to the organization.</td><td>Accept if NPV &gt; $0</td><td>Highly sensitive to discount rate selection.</td></tr>
+<tr><th scope="row">Internal Rate of Return (IRR)</th><td>Measures expected percentage rate of return.</td><td>Accept if IRR &gt; Hurdle Rate</td><td>Can yield multiple rates of return in non-standard cash flows.</td></tr>
+<tr><th scope="row">Discounted Payback</th><td>Measures years to recover initial capital investment.</td><td>Accept if Payback &lt; Target Years</td><td>Ignores cash flows generated after the payback year.</td></tr>
+</tbody></table></div>
+</section>
+<section class="lesson-block tint" id="model"><h2>Explore the Three-Year DCF Example</h2><p>Change the hurdle rate or cash flows to see their effect on present value and NPV. Calculations use full precision before rounding displayed dollar amounts.</p><form id="dcfForm"><div class="model-fields">
+<label for="capex">Initial CapEx ($)<input type="number" id="capex" value="200000" step="any" required min="0"></label>
+<label for="rate">Annual hurdle rate (%)<input type="number" id="rate" value="8" step="any" required min="0" max="100"></label>
+<label for="year1">Year 1 net cash flow ($)<input type="number" id="year1" value="80000" step="any" required></label>
+<label for="year2">Year 2 net cash flow ($)<input type="number" id="year2" value="90000" step="any" required></label>
+<label for="year3">Year 3 net cash flow ($)<input type="number" id="year3" value="100000" step="any" required></label>
+</div><div class="assessment-actions"><button class="primary" type="submit">Calculate</button><button class="secondary" type="reset">Reset example</button></div></form><div class="model-result" id="modelResult" role="status" aria-live="polite"></div></section>
+<section class="lesson-block " id="section-4"><h2>4. C-Suite Governance: Handling Conflict Metrics &amp; Non-Financial Returns</h2>
+<h3 class="subheading">4.1 Resolving NPV vs. IRR Conflicts</h3>
+<p>When ranking mutually exclusive capital projects, NPV and IRR metrics occasionally yield conflicting rankings due to differences in project scale (large vs. small capital outlays) or cash flow timing.</p>
+<div class="callout">Executive Rule: When NPV and IRR rankings conflict, executive leadership must always prioritize NPV. NPV directly measures absolute dollar wealth creation, whereas IRR measures percentage efficiency, which can distort decisions on large-scale health system investments.</div>
+<h3 class="subheading">4.2 Incorporating Value-Based and Strategic ROI</h3>
+<p>In value-based healthcare, capital investments frequently generate financial returns through cost avoidance (e.g., reducing 30-day readmissions, avoiding hospital-acquired conditions, or lowering total cost of care) rather than new fee-for-service revenue volume.</p>
+<p>When constructing a DCF schedule for a value-based innovation, executive teams must capture:</p>
+<p>Direct Cost Savings: Reduction in premium labor utilization or supply chain efficiencies.</p>
+<p>Shared Savings Distributions: Incremental revenue captured through ACO or value-based risk contracts.</p>
+<p>Penalty Avoidance: Quantifiable savings generated by avoiding CMS value-based payment penalties.</p>
+</section>
+<section class="lesson-block alt" id="section-5"><h2>5. Executive Takeaways &amp; ECPOA Application Guide</h2>
+<h3 class="subheading">5.1 Translating Theory to Your ECPOA Master Worksheet</h3>
+<p>This week’s quantitative modeling concepts directly inform your execution of Section 3: Advanced Financial Modeling &amp; ROI within your continuous ECPOA Master Worksheet due this Sunday:</p>
+<div class="worksheet"><label for="draft-2">Section 3.1 — Multi-Year Discounted Cash Flow (DCF) Schedule:</label><ul>
+<li>Construct a clear 3-to-5-year financial schedule detailing initial capital outlays, projected operational revenue drivers, and incremental operating expenses.</li>
+<li>Clearly state your baseline annual cash flow projections.</li>
+</ul><textarea id="draft-2" aria-label="Section 3.1 — Multi-Year Discounted Cash Flow (DCF) Schedule:"></textarea></div>
+<div class="worksheet"><label for="draft-5">Section 3.2 — Quantitative Metric Calculations (NPV, IRR, Payback):</label><ul>
+<li>State your organization’s cost of capital / hurdle rate (e.g., 6%, 8%, or 10%) and justify your selection using WACC principles.</li>
+<li>Present calculated values for Net Present Value (NPV), Internal Rate of Return (IRR), and Payback Period (standard and discounted).</li>
+</ul><textarea id="draft-5" aria-label="Section 3.2 — Quantitative Metric Calculations (NPV, IRR, Payback):"></textarea></div>
+<div class="worksheet"><label for="draft-8">Section 3.3 — Executive ROI Synthesis &amp; Viability Assessment:</label><ul>
+<li>Synthesize what these quantitative outputs mean for C-suite governance.</li>
+<li>State definitively whether the strategic initiative is financially justifiable, cross-subsidized by other service lines, or dependent on value-based cost avoidance to achieve viability.</li>
+</ul><textarea id="draft-8" aria-label="Section 3.3 — Executive ROI Synthesis &amp; Viability Assessment:"></textarea></div>
+<h3 class="subheading">5.2 Key Terminology Cheat-Sheet</h3>
+<details class="term"><summary>DCF (Discounted Cash Flow):</summary><p>A valuation method that discounts prospective future cash flows to estimate present value.</p></details>
+<details class="term"><summary>NPV (Net Present Value):</summary><p>The difference between the present value of cash inflows and the present value of cash outflows over time.</p></details>
+<details class="term"><summary>IRR (Internal Rate of Return):</summary><p>The discount rate that makes the net present value of all cash flows from a project equal to zero.</p></details>
+<details class="term"><summary>WACC (Weighted Average Cost of Capital):</summary><p>The average rate of return a company is expected to pay to all its security holders to finance its assets.</p></details>
+<details class="term"><summary>Hurdle Rate:</summary><p>The minimum rate of return required on an investment project before executive approval is granted.</p></details>
+<p class="template-note">Drafts remain on this page until you close or reload it. Download your notes to keep a copy.</p><button type="button" class="primary" id="downloadNotes">Download ECPOA notes</button><p class="notes-status" id="notesStatus" role="status"></p>
+</section></div></main></div><script>
+const form=document.getElementById('dcfForm'),result=document.getElementById('modelResult');
+const money=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:2,maximumFractionDigits:2});
+function calculate(){
+ const capex=Number(document.getElementById('capex').value),rate=Number(document.getElementById('rate').value)/100;
+ const flows=[1,2,3].map(i=>Number(document.getElementById('year'+i).value));
+ const pvs=flows.map((flow,i)=>flow/Math.pow(1+rate,i+1)),total=pvs.reduce((a,b)=>a+b,0),npv=total-capex;
+ if(![...pvs,total,npv].every(Number.isFinite)){result.textContent='Enter values within a calculable range.';return;}
+ result.innerHTML='<p>Net Present Value: <strong>'+money.format(npv)+'</strong></p><p>'+ (Math.abs(npv)<0.005?'The project is at the financial break-even point at this hurdle rate.':npv>0?'The discounted inflows exceed the initial capital outlay at this hurdle rate.':'The discounted inflows fall short of the initial capital outlay at this hurdle rate.')+'</p><div class="table-wrap"><table><thead><tr><th scope="col">Year</th><th scope="col">Net cash flow</th><th scope="col">Present value</th></tr></thead><tbody>'+flows.map((flow,i)=>'<tr><th scope="row">'+(i+1)+'</th><td>'+money.format(flow)+'</td><td>'+money.format(pvs[i])+'</td></tr>').join('')+'</tbody></table></div><p>Total present value of inflows: '+money.format(total)+'</p>';
+}
+form.addEventListener('submit',event=>{event.preventDefault();if(form.reportValidity())calculate();});
+form.addEventListener('reset',()=>setTimeout(calculate,0));
+form.addEventListener('input',()=>{result.textContent='Inputs changed. Select Calculate to update the results.';});calculate();
+document.getElementById('downloadNotes').addEventListener('click',()=>{
+ const fields=[...document.querySelectorAll('.worksheet textarea')],status=document.getElementById('notesStatus');
+ if(!fields.some(field=>field.value.trim())){status.textContent='Write a draft response before downloading.';fields[0].focus();return;}
+ const text='DMS 5850 — Week 3 ECPOA Notes\n\n'+fields.map(field=>field.closest('.worksheet').querySelector('label').textContent+'\n'+field.value.trim()).join('\n\n');
+ const url=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'})),link=document.createElement('a');link.href=url;link.download='DMS5850-week-3-ECPOA-notes.txt';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);status.textContent='Notes downloaded.';
+});
+</script></body></html>
